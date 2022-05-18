@@ -44,9 +44,10 @@ export default {
       required:true
     }
   },
-  setup(props){
+  async setup(props){
     const store = directivesStore(props.api)
-    Promise.race([store.getData(store.options)]).then(response => {
+    const data = store.getData(store.options)
+    await Promise.race([data]).then(response => {
       store.data = response
     })
     return{

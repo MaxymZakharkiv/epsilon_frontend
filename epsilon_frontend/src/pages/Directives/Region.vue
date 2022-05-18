@@ -1,9 +1,17 @@
 <template>
-  <Table
-    :title="'Райони'"
-    :api="api"
-    :columns="columns"
-  />
+
+    <Suspense>
+      <template #default>
+        <Table
+          :title="'Райони'"
+          :api="api"
+          :columns="columns"
+        />
+      </template>
+      <template #fallback>
+        Loading...
+      </template>
+    </Suspense>
 </template>
 
 <script>
