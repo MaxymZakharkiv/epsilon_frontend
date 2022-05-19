@@ -1,26 +1,38 @@
 <template>
-
     <Suspense>
       <template #default>
         <Table
           :title="'Райони'"
           :api="api"
           :columns="columns"
+          @addNewElement="addNewElement"
+          @editElement="editElement"
+          @deleteElement="deleteElement"
         />
       </template>
       <template #fallback>
-        Loading...
+        <Skeleton/>
       </template>
     </Suspense>
 </template>
 
 <script>
+
 import Table from "components/Table";
-import api from '../../api/region'
+import Skeleton from "components/Skeleton";
+import CreateRegion from "components/Region/Dialogs/CreateRegion";
+import EditRegion from "components/Region/Dialogs/EditRegion";
+
+import api from '../../api/region';
+import { directivesStore } from '../../stores/directivesStore'
+
+import { useQuasar } from 'quasar'
+
 export default {
   name: "Region",
   components: {
-    Table
+    Table,
+    Skeleton
   },
   setup(){
 
@@ -64,9 +76,32 @@ export default {
       },
     ]
 
+    const $q = useQuasar()
+    const store = directivesStore(api)
+
+    const addNewElement = () => {
+      $q.dialog({
+        component: CreateRegion
+      })
+    }
+
+    const editElement = () => {
+      $q.dialog({
+        component:EditRegion
+      })
+    }
+
+    const deleteElement = (id) => {
+      store.deleteData(id)
+    }
+
     return{
       api,
-      columns
+      columns,
+
+      addNewElement,
+      editElement,
+      deleteElement
     }
   }
 }

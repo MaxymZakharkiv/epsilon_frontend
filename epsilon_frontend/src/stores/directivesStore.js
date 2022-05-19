@@ -2,22 +2,10 @@ import { defineStore } from 'pinia'
 import {ref} from "vue";
 
 
-// export const directivesStore = defineStore('directivesStore', (api) => {
-//  console.log(api)
-// })
-
 export function directivesStore(api){
   return defineStore('directivesStore', () => {
-    let options = ref({
-      "request": {
-        "limit": 50,
-        "offset": 0,
-        "order_by": [],
-        "filter_by": []
-      },
-      "uselist": true
-    })
 
+    let edit_data = ref({})
     let data = ref([])
 
     const getData = async (options) => {
@@ -29,11 +17,36 @@ export function directivesStore(api){
       }
     }
 
+    const createData = async (objects) => {
+      try {
+        const response = await api.create(objects)
+        console.log(response.data)
+        data.value.unshift(response.data)
+      } catch (e) {
+       console.log(e)
+      }
+    }
+
+    const editData = async (objects) => {
+      const response = await api.edit(objects)
+      let index = data.value.findIndex(obj => obj.id === objects.id)
+      data.value[index] = response.data
+    }
+
+    const deleteData = async (id) => {
+      const response = await api.del(id)
+      console.log(response)
+      data.value = data.value.filter(i => i.id !== id)
+    }
+
     return{
       getData,
+      createData,
+      editData,
+      deleteData,
 
-      options,
-      data
+      data,
+      edit_data
     }
   })()
 }
