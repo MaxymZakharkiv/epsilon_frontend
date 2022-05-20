@@ -11,6 +11,7 @@ export function directivesStore(api){
     const getData = async (options) => {
       try {
         const response = await api.list(options)
+        console.log(response)
         return response.data
       } catch (error) {
         console.log(error)
@@ -20,7 +21,6 @@ export function directivesStore(api){
     const createData = async (objects) => {
       try {
         const response = await api.create(objects)
-        console.log(response.data)
         data.value.unshift(response.data)
       } catch (e) {
        console.log(e)
@@ -35,7 +35,6 @@ export function directivesStore(api){
 
     const deleteData = async (id) => {
       const response = await api.del(id)
-      console.log(response)
       data.value = data.value.filter(i => i.id !== id)
     }
 
