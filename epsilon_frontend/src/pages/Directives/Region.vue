@@ -1,4 +1,5 @@
 <template>
+  <FilterData :api="api" :field="field" />
     <Suspense>
       <template #default>
         <Table
@@ -22,17 +23,19 @@ import Table from "components/Table";
 import Skeleton from "components/Skeleton";
 import CreateRegion from "components/Region/Dialogs/CreateRegion";
 import EditRegion from "components/Region/Dialogs/EditRegion";
+import FilterData from "components/FilterData";
 
 import api from '../../api/region';
 import { directivesStore } from '../../stores/directivesStore'
 
 import { useQuasar } from 'quasar'
-
+const field = ['id', 'name', 'schema']
 export default {
   name: "Region",
   components: {
     Table,
-    Skeleton
+    Skeleton,
+    FilterData
   },
   setup(){
 
@@ -98,6 +101,7 @@ export default {
     return{
       api,
       columns,
+      field,
 
       addNewElement,
       editElement,

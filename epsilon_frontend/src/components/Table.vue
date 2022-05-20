@@ -6,7 +6,7 @@
     :loading="loading"
     @request="onRequest"
     v-model:pagination="pagination"
-    @row-dblclick="editRow"
+
   >
     <template v-slot:top-right>
       <q-btn @click="addNewData" rounded color="primary" icon-right="add">Додати</q-btn>
@@ -20,6 +20,16 @@
           flat
           dense
           @click="deleteRow(props.row.id)"
+        />
+      </q-td>
+      <q-td :props="props">
+        <q-btn
+          color="teal-9"
+          icon-right="mdi-pencil"
+          no-caps
+          flat
+          dense
+          @click="editRow(props.row)"
         />
       </q-td>
     </template>
@@ -159,8 +169,8 @@ export default {
       loading.value = false
     }
 
-    const editRow = (evt, row) => {
-      store.edit_data = row
+    const editRow = (data) => {
+      store.edit_data = data
       emit('editElement')
     }
 
