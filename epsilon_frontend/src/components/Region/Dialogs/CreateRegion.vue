@@ -33,7 +33,6 @@ export default {
       schema:'',
       name_aliases:''
     })
-
     const store = directivesStore(api)
 
     const addNewData = async () => {
@@ -53,7 +52,7 @@ export default {
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
-      addNewData
+      addNewData,
     }
   }
 }

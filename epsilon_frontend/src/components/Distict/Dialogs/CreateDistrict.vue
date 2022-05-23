@@ -36,11 +36,13 @@
 <script>
 
 import { directivesStore } from 'stores/directivesStore'
-import api from '../../../api/districts'
+
+import api_region from '../../../api/region'
+import api_district from '../../../api/district'
+
 import { useDialogPluginComponent } from 'quasar'
 
 import { ref } from 'vue'
-import http from '../../../lib/http'
 
 export default {
   name: "CreateDistrict",
@@ -58,11 +60,11 @@ export default {
       name_aliases:''
     })
 
-    const store = directivesStore(api)
+    const store = directivesStore(api_district)
 
     const setFilter = (data, update) => {
       update(() => {
-        console.log(data)
+
       })
     }
 

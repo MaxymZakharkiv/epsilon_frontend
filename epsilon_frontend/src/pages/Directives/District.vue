@@ -23,7 +23,7 @@ import Skeleton from "components/Skeleton";
 import CreateDistrict from "components/Distict/Dialogs/CreateDistrict";
 import FilterData from "components/FilterData";
 import { directivesStore } from '../../stores/directivesStore'
-import api from '../../api/districts'
+import api from '../../api/district'
 
 import { useQuasar } from "quasar";
 
@@ -83,7 +83,6 @@ export default {
         align:'left'
       },
     ]
-    const store = directivesStore(api)
     const $q = useQuasar()
 
 

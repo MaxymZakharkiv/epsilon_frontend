@@ -4,7 +4,7 @@ import {ref} from "vue";
 
 export function directivesStore(api){
   return defineStore('directivesStore', () => {
-
+    console.log(api)
     let edit_data = ref({})
     let data = ref([])
 
