@@ -24,8 +24,8 @@
 import {ref, watch} from 'vue'
 import { directivesStore } from '../stores/directivesStore'
 
-
 const operators = ['=', '<>', '>', '<']
+
 export default {
   name: "FilterData",
   props:{
@@ -45,15 +45,6 @@ export default {
     const arrayInputFilter = ref([])
     const disableButtonRemove = ref(true)
 
-    let options = ref({
-      "request": {
-        "limit": 10,
-        "offset": 0,
-        "order_by": [],
-        "filter_by": []
-      },
-      "uselist": true
-    })
 
     const store = directivesStore(props.api)
 
@@ -91,16 +82,16 @@ export default {
     const isCheckData = (data) => {
       let emptyObjects = data.filter(i => ([i.field].includes('')))
       if (emptyObjects.length){
-        options.value.request.filter_by = []
+        store.options_data.request.filter_by = []
       } else {
-        options.value.request.filter_by = data
+        store.options_data.request.filter_by = data
       }
     }
 
     const filterDataInTable = async (dataFilter) => {
       isCheckData(dataFilter)
-      options.value.request.offset = 0
-      await Promise.race([store.getData(options.value)]).then(response => {
+      store.options_data.request.offset = 0
+      await Promise.race([store.getData(store.options_data)]).then(response => {
         store.data = response
       })
     }

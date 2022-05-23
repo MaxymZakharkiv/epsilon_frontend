@@ -8,6 +8,16 @@ export function directivesStore(api){
     let edit_data = ref({})
     let data = ref([])
 
+    let options_data = ref({
+      "request": {
+        "limit": 10,
+        "offset": 0,
+        "order_by": [],
+        "filter_by": []
+      },
+      "uselist": true
+    })
+
     const getData = async (options) => {
       try {
         const response = await api.list(options)
@@ -21,6 +31,7 @@ export function directivesStore(api){
     const createData = async (objects) => {
       try {
         const response = await api.create(objects)
+        console.log(response.data)
         data.value.unshift(response.data)
       } catch (e) {
        console.log(e)
@@ -45,7 +56,8 @@ export function directivesStore(api){
       deleteData,
 
       data,
-      edit_data
+      edit_data,
+      options_data
     }
   })()
 }

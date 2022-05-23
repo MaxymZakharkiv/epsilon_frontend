@@ -1,44 +1,41 @@
 <template>
   <FilterData :api="api" :field="field" />
-    <Suspense>
-      <template #default>
-        <Table
-          :title="'Райони'"
-          :api="api"
-          :columns="columns"
-          @addNewElement="addNewElement"
-          @editElement="editElement"
-          @deleteElement="deleteElement"
-        />
-      </template>
-      <template #fallback>
-        <Skeleton/>
-      </template>
-    </Suspense>
+  <Suspense>
+    <template #default>
+      <Table
+        :title="'Райони'"
+        :columns="columns"
+        :api="api"
+        @addNewElement="addNewElement"
+      />
+    </template>
+    <template #fallback>
+      <Skeleton/>
+    </template>
+  </Suspense>
 </template>
 
 <script>
 
+
 import Table from "components/Table";
 import Skeleton from "components/Skeleton";
-import CreateRegion from "components/Region/Dialogs/CreateRegion";
-import EditRegion from "components/Region/Dialogs/EditRegion";
+import CreateDistrict from "components/Distict/Dialogs/CreateDistrict";
 import FilterData from "components/FilterData";
-
-import api from '../../api/region';
 import { directivesStore } from '../../stores/directivesStore'
-import { useQuasar } from 'quasar'
+import api from '../../api/districts'
 
-const field = ['id', 'name', 'schema']
+import { useQuasar } from "quasar";
+
 export default {
-  name: "Region",
-  components: {
+  name: "District",
+  components:{
     Table,
     Skeleton,
     FilterData
   },
   setup(){
-
+    const field = ['id', 'name', 'schema', 'schema_id']
     const columns = [
       {
         name:'id',
@@ -46,6 +43,14 @@ export default {
         align:'left',
         sortable:true,
         field: row => row.id,
+        format:val => `${val}`
+      },
+      {
+        name:'region_id',
+        label:'region_id',
+        align:'left',
+        sortable:true,
+        field: row => row.region.name,
         format:val => `${val}`
       },
       {
@@ -77,40 +82,23 @@ export default {
         label:'remove',
         align:'left'
       },
-      {
-        name:'edit',
-        label:'edit',
-        align:'left'
-      },
     ]
-
-    const $q = useQuasar()
     const store = directivesStore(api)
+    const $q = useQuasar()
+
 
     const addNewElement = () => {
       $q.dialog({
-        component: CreateRegion
+        component:CreateDistrict
       })
-    }
-
-    const editElement = () => {
-      $q.dialog({
-        component:EditRegion
-      })
-    }
-
-    const deleteElement = (id) => {
-      store.deleteData(id)
     }
 
     return{
-      api,
       columns,
       field,
+      api,
 
-      addNewElement,
-      editElement,
-      deleteElement
+      addNewElement
     }
   }
 }

@@ -62,8 +62,9 @@
 </template>
 
 <script>
+
 import { directivesStore } from '../stores/directivesStore'
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 export default {
   name: "Table",
@@ -88,21 +89,13 @@ export default {
       rowsNumber: 10
     })
 
-    let options = ref({
-      "request": {
-        "limit": 10,
-        "offset": 0,
-        "order_by": [],
-        "filter_by": []
-      },
-      "uselist": true
-    })
 
     const loading = ref(false)
     const sortData = ref([])
 
     const store = directivesStore(props.api)
     const disableNextButton = ref(false)
+    const disablePrevButton = ref(true)
 
 
     const onRequest = async (value) => {
@@ -122,16 +115,16 @@ export default {
         return i['field'] !== 'desc'
       })
 
-      options.value.request.limit = rowsPerPage
-      options.value.request.order_by = sortData.value
-      options.value.request.offset = 0
 
-      await Promise.race([store.getData(options.value)]).then(response => {
+      store.options_data.request.limit = rowsPerPage
+      store.options_data.request.order_by = sortData.value
+      store.options_data.request.offset = 0
+
+      await Promise.race([store.getData(store.options_data)]).then(response => {
         store.data = response
       })
 
       loading.value = false
-
       pagination.value.rowsPerPage = rowsPerPage
       pagination.value.sortBy = sortBy
       pagination.value.descending = descending
@@ -141,27 +134,29 @@ export default {
       pagination: pagination.value
     })
 
-    const disablePrevButton = computed(() => {
-      return options.value.request.offset === 0 ? true : false
-    })
+
+    watch(store.options_data, value => {
+      disablePrevButton.value = value.request.offset === 0 ? true : false
+    }, {deep:true})
+
 
     const previousPage = async () => {
       disableNextButton.value = false
-      options.value.request.offset -= options.value.request.limit
+      store.options_data.request.offset -= store.options_data.request.limit
       loading.value = true
-      await Promise.race([store.getData(options.value)]).then(response => {
+      await Promise.race([store.getData(store.options_data)]).then(response => {
         store.data = response
       })
       loading.value = false
     }
 
     const nextPage = async () => {
-      options.value.request.offset += options.value.request.limit
+      store.options_data.request.offset += store.options_data.request.limit
       loading.value = true
-      await Promise.race([store.getData(options.value)]).then(response => {
+      await Promise.race([store.getData(store.options_data)]).then(response => {
         if (response.length === 0){
           disableNextButton.value = true
-          options.value.request.offset -= options.value.request.limit
+          store.options_data.request.offset -= store.options_data.request.limit
         } else {
           store.data = response
         }
@@ -186,7 +181,6 @@ export default {
       store,
       pagination,
       loading,
-      options,
       disablePrevButton,
       disableNextButton,
 

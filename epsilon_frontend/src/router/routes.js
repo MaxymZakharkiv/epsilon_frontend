@@ -8,6 +8,11 @@ const routes = [
         path:'/region',
         name:'region',
         component: () => import('pages/Directives/Region')
+      },
+      {
+        path: '/district',
+        name:'district',
+        component: () => import('../pages/Directives/District')
       }
     ]
   },
