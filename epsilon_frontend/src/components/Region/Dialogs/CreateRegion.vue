@@ -35,6 +35,7 @@ export default {
     })
     const store = directivesStore(api)
 
+
     const addNewData = async () => {
       await store.createData({
         name: form.value.name,

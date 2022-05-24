@@ -4,7 +4,7 @@ import {ref} from "vue";
 
 export function directivesStore(api){
   return defineStore('directivesStore', () => {
-    console.log(api)
+
     let edit_data = ref({})
     let data = ref([])
 
@@ -18,15 +18,21 @@ export function directivesStore(api){
       "uselist": true
     })
 
+
     const getData = async (options) => {
       try {
         const response = await api.list(options)
-        console.log(response)
+        console.log(api.name_api, response)
         return response.data
       } catch (error) {
         console.log(error)
       }
     }
+
+    const return_name_api = () => {
+      return api.name_api
+    }
+
 
     const createData = async (objects) => {
       try {
@@ -55,9 +61,11 @@ export function directivesStore(api){
       editData,
       deleteData,
 
+      return_name_api,
+
       data,
       edit_data,
-      options_data
+      options_data,
     }
   })()
 }

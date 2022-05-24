@@ -8,12 +8,12 @@
           use-input
           hide-selected
           fill-input
-          input-debounce="500"
+          input-debounce="2000"
           :options="options"
           option-value="id"
           option-label="name"
-          @filter="setFilter"
           label="Регіони"
+          @filter="setFilter"
         >
           <template v-slot:no-option>
             <q-item>
@@ -35,13 +35,11 @@
 
 <script>
 
-import { directivesStore } from 'stores/directivesStore'
-
+import { directivesStore } from '../../../stores/directivesStore'
 import api_region from '../../../api/region'
 import api_district from '../../../api/district'
 
 import { useDialogPluginComponent } from 'quasar'
-
 import { ref } from 'vue'
 
 export default {
@@ -60,12 +58,22 @@ export default {
       name_aliases:''
     })
 
-    const store = directivesStore(api_district)
-
+    const store_region = directivesStore(api_region)
+    console.log(store_region.return_name_api())
+    console.log(store_region)
     const setFilter = (data, update) => {
-      update(() => {
-
-      })
+      // update(async () => {
+      //   store_region.options_data.request.filter_by = []
+      //   const info = {
+      //     field:'name',
+      //     operator:'like',
+      //     value: data+'%'
+      //   }
+      //   store_region.options_data.request.filter_by.push(info)
+      //   await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
+      //     console.log(response)
+      //   })
+      // })
     }
 
     return{

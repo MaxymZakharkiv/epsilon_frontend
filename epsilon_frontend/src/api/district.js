@@ -6,7 +6,7 @@ const DISTRICTS_VIEW = "/district/view"
 const DISTRICTS_CREATE = "/district/create";
 const DISTRICTS_UPDATE = "/district/update";
 const DISTRICTS_DELETE = "/district/delete";
-
+const name_api = "district"
 
 function list(options) {
   return http.post(
@@ -14,6 +14,7 @@ function list(options) {
     options
   )
 }
+
 
 function view(options){
   return http.post(
@@ -48,5 +49,6 @@ export default {
   view,
   create,
   edit,
-  del
+  del,
+  name_api
 }

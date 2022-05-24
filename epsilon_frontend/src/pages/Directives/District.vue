@@ -1,11 +1,11 @@
 <template>
-  <FilterData :api="api" :field="field" />
+  <FilterData :api="api_district" :field="field" />
   <Suspense>
     <template #default>
       <Table
         :title="'Райони'"
         :columns="columns"
-        :api="api"
+        :api="api_district"
         @addNewElement="addNewElement"
       />
     </template>
@@ -22,8 +22,8 @@ import Table from "components/Table";
 import Skeleton from "components/Skeleton";
 import CreateDistrict from "components/Distict/Dialogs/CreateDistrict";
 import FilterData from "components/FilterData";
-import { directivesStore } from '../../stores/directivesStore'
-import api from '../../api/district'
+import api_district from '../../api/district'
+import {directivesStore} from "stores/directivesStore";
 
 import { useQuasar } from "quasar";
 
@@ -84,18 +84,19 @@ export default {
       },
     ]
     const $q = useQuasar()
+    const store = directivesStore(api_district)
 
 
     const addNewElement = () => {
       $q.dialog({
-        component:CreateDistrict
+        component:CreateDistrict,
       })
     }
 
     return{
       columns,
       field,
-      api,
+      api_district,
 
       addNewElement
     }
