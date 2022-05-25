@@ -93,7 +93,7 @@ export default {
     const loading = ref(false)
     const sortData = ref([])
 
-    const store = directivesStore(props.api)
+    const store = directivesStore(props.api, 'tableStore')
     const disableNextButton = ref(false)
     const disablePrevButton = ref(true)
 

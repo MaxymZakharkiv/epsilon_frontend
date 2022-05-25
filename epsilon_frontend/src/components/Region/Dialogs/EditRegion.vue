@@ -29,25 +29,34 @@ export default {
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-    const store = directivesStore(api)
+    const store = directivesStore(api, 'storeForRegion')
+    console.log(store.edit_data)
     const formEdit = ref({
-      id: store.edit_data.id,
-      name: store.edit_data.name,
-      schema: store.edit_data.schema,
-      name_aliases: store.edit_data.name_aliases.join(', ')
+      id: null,
+      name: '',
+      schema: '',
+      name_aliases: ''
     })
+    // const formEdit = ref({
+    //   id: store.edit_data.id,
+    //   name: store.edit_data.name,
+    //   schema: store.edit_data.schema,
+    //   name_aliases: store.edit_data.name_aliases.join(', ')
+    // })
 
-    const editData = async (data) => {
-      console.log(data)
-      const infoEdit = {
-        id: data.id,
-        name: data.name,
-        schema: data.schema,
-        name_aliases: data.name_aliases.split(', ')
-      }
-      await store.editData(infoEdit)
-      onDialogOK()
-    }
+
+
+    // const editData = async (data) => {
+    //   console.log(data)
+    //   const infoEdit = {
+    //     id: data.id,
+    //     name: data.name,
+    //     schema: data.schema,
+    //     name_aliases: data.name_aliases.split(', ')
+    //   }
+    //   await store.editData(infoEdit)
+    //   onDialogOK()
+    // }
 
     return{
       formEdit,
@@ -55,7 +64,7 @@ export default {
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
-      editData
+      // editData
     }
   }
 }

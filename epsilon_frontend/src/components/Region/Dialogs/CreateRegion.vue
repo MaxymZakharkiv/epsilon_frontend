@@ -2,9 +2,22 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin">
       <q-card-section>
-        <q-input v-model="form.name" label="name" />
-        <q-input v-model="form.schema" label="schema" />
-        <q-input type="textarea" v-model="form.name_aliases" label="alias" />
+        <q-input
+          v-model="form.name"
+          label="name"
+          :rules="[val => !!val || 'Field is required' ]"
+        />
+        <q-input
+          v-model="form.schema"
+          label="schema"
+          :rules="[val => !!val || 'Field is required' ]"
+        />
+        <q-input
+          type="textarea"
+          v-model="form.name_aliases"
+          label="alias"
+          :rules="[val => !!val || 'Field is required' ]"
+        />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -33,8 +46,7 @@ export default {
       schema:'',
       name_aliases:''
     })
-    const store = directivesStore(api)
-
+    const store = directivesStore(api, 'storeForRegion')
 
     const addNewData = async () => {
       await store.createData({

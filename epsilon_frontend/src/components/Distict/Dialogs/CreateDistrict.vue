@@ -8,7 +8,7 @@
           use-input
           hide-selected
           fill-input
-          input-debounce="2000"
+          input-debounce="500"
           :options="options"
           option-value="id"
           option-label="name"
@@ -59,21 +59,19 @@ export default {
     })
 
     const store_region = directivesStore(api_region)
-    console.log(store_region.return_name_api())
-    console.log(store_region)
     const setFilter = (data, update) => {
-      // update(async () => {
-      //   store_region.options_data.request.filter_by = []
-      //   const info = {
-      //     field:'name',
-      //     operator:'like',
-      //     value: data+'%'
-      //   }
-      //   store_region.options_data.request.filter_by.push(info)
-      //   await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
-      //     console.log(response)
-      //   })
-      // })
+      update(async () => {
+        store_region.options_data.request.filter_by = []
+        const info = {
+          field:'name',
+          operator:'like',
+          value: data+'%'
+        }
+        store_region.options_data.request.filter_by.push(info)
+        await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
+          console.log(response)
+        })
+      })
     }
 
     return{

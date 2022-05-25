@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import {ref} from "vue";
 
 
-export function directivesStore(api){
-  return defineStore('directivesStore', () => {
-
+export function directivesStore(api, store_id){
+  return defineStore(String(store_id), () => {
+    console.log(api)
     let edit_data = ref({})
     let data = ref([])
 
@@ -17,7 +17,6 @@ export function directivesStore(api){
       },
       "uselist": true
     })
-
 
     const getData = async (options) => {
       try {
@@ -32,7 +31,6 @@ export function directivesStore(api){
     const return_name_api = () => {
       return api.name_api
     }
-
 
     const createData = async (objects) => {
       try {
