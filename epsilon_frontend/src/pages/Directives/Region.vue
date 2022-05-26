@@ -3,7 +3,7 @@
     <Suspense>
       <template #default>
         <Table
-          :title="'Райони'"
+          :title="'Регіони'"
           :api="api"
           :columns="columns"
           @addNewElement="addNewElement"

@@ -48,7 +48,15 @@ export default {
         schema: data.schema,
         name_aliases: data.name_aliases.split(', ')
       }
-      await store.editData(infoEdit)
+
+      const extra_data = {
+        id: data.id,
+        name: data.name,
+        schema: data.schema,
+        name_aliases: data.name_aliases.split(', ')
+      }
+
+      await store.editData(infoEdit, extra_data)
       onDialogOK()
     }
 

@@ -6,18 +6,6 @@
           label="name"
           v-model="formEdit.name"
         />
-        <q-select
-          v-model="formEdit.region"
-          use-input
-          hide-selected
-          fill-input
-          input-debounce="500"
-          :options="options"
-          option-value="id"
-          option-label="name"
-          label="Регіони"
-          @filter="setFilter"
-        />
         <q-input
           v-model="formEdit.name_aliases"
           type="textarea"
@@ -36,7 +24,6 @@
 
 import { directivesStore } from '../../../stores/directivesStore'
 import api_district from '../../../api/district'
-import api_region from '../../../api/region'
 
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
@@ -51,7 +38,7 @@ export default {
 
     const options = ref([])
     const store_district = directivesStore(api_district)
-    const store_region = directivesStore(api_region, 'regionStore')
+
     console.log(store_district.edit_data)
 
     const formEdit = ref({
@@ -61,22 +48,6 @@ export default {
       schema: store_district.edit_data.schema,
       name_aliases: store_district.edit_data.name_aliases.join(', ')
     })
-
-    const setFilter = (data, update) => {
-      update(async () => {
-        store_region.options_data.request.filter_by = []
-        const info = {
-          field:'name',
-          operator:'like',
-          value: data+'%'
-        }
-        store_region.options_data.request.filter_by.push(info)
-        await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
-          console.log(response)
-          options.value = response
-        })
-      })
-    }
 
     const editData = async (data) => {
       console.log(data)
@@ -110,7 +81,6 @@ export default {
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
 
-      setFilter,
       editData,
     }
 
