@@ -85,7 +85,7 @@ export default {
     ]
 
     const $q = useQuasar()
-    const store = directivesStore(api, 'a')
+    const store = directivesStore(api)
 
     const addNewElement = () => {
       $q.dialog({

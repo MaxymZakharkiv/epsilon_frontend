@@ -6,7 +6,6 @@
     :loading="loading"
     @request="onRequest"
     v-model:pagination="pagination"
-
   >
     <template v-slot:top-right>
       <q-btn @click="addNewData" rounded color="primary" icon-right="add">Додати</q-btn>
@@ -93,7 +92,7 @@ export default {
     const loading = ref(false)
     const sortData = ref([])
 
-    const store = directivesStore(props.api, 'tableStore')
+    const store = directivesStore(props.api)
     const disableNextButton = ref(false)
     const disablePrevButton = ref(true)
 
@@ -138,7 +137,6 @@ export default {
     watch(store.options_data, value => {
       disablePrevButton.value = value.request.offset === 0 ? true : false
     }, {deep:true})
-
 
     const previousPage = async () => {
       disableNextButton.value = false

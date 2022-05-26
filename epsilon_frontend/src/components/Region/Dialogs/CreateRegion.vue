@@ -46,15 +46,19 @@ export default {
       schema:'',
       name_aliases:''
     })
-    const store = directivesStore(api, 'storeForRegion')
+    const store = directivesStore(api)
 
     const addNewData = async () => {
+      const info = {
+        name: form.value.name,
+        schema: form.value.schema,
+        name_aliases: form.value.name_aliases.split(',')
+      }
       await store.createData({
         name: form.value.name,
         schema: form.value.schema,
         name_aliases: form.value.name_aliases.split(',')
-      })
-      store.data.pop()
+      }, info)
       onDialogOK()
     }
 

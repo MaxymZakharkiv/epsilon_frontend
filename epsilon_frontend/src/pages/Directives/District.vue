@@ -7,6 +7,8 @@
         :columns="columns"
         :api="api_district"
         @addNewElement="addNewElement"
+        @editElement="editElement"
+        @deleteElement="deleteElement"
       />
     </template>
     <template #fallback>
@@ -21,6 +23,7 @@
 import Table from "components/Table";
 import Skeleton from "components/Skeleton";
 import CreateDistrict from "components/Distict/Dialogs/CreateDistrict";
+import EditDistrict from "components/Distict/Dialogs/EditDistrict";
 import FilterData from "components/FilterData";
 import api_district from '../../api/district'
 import {directivesStore} from "stores/directivesStore";
@@ -93,12 +96,24 @@ export default {
       })
     }
 
+    const editElement = () => {
+      $q.dialog({
+        component: EditDistrict
+      })
+    }
+
+    const deleteElement = (id) => {
+      store.deleteData(id)
+    }
+
     return{
       columns,
       field,
       api_district,
 
-      addNewElement
+      addNewElement,
+      editElement,
+      deleteElement
     }
   }
 }

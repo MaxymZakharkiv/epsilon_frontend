@@ -4,7 +4,7 @@
       <q-card-section>
         <q-input v-model="form.name" label="name" />
         <q-select
-          v-model="autocomplete"
+          v-model="form.autocomplete"
           use-input
           hide-selected
           fill-input
@@ -27,7 +27,7 @@
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
-        <q-btn color="primary" label="OK"  />
+        <q-btn color="primary" label="OK" @click="addNewData(form)" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -49,16 +49,17 @@ export default {
   ],
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
-    const autocomplete = ref(null)
     const options = ref([])
 
     const form = ref({
-      region_id: 1,
       name:'',
-      name_aliases:''
+      name_aliases:'',
+      autocomplete: null
     })
 
-    const store_region = directivesStore(api_region)
+    const store_region = directivesStore(api_region, 'regionStore')
+    const store_district = directivesStore(api_district)
+
     const setFilter = (data, update) => {
       update(async () => {
         store_region.options_data.request.filter_by = []
@@ -70,19 +71,41 @@ export default {
         store_region.options_data.request.filter_by.push(info)
         await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
           console.log(response)
+          options.value = response
         })
       })
     }
 
+    const addNewData = async (data) => {
+      const info = {
+        name: data.name,
+        schema: data.autocomplete.schema,
+        name_aliases: data.name_aliases.split(','),
+        region_id: data.autocomplete.id
+      }
+      console.log(data.autocomplete)
+      const data_district = {
+        name: data.name,
+        schema: data.autocomplete.schema,
+        name_aliases: data.name_aliases.split(','),
+        region:{
+          id: data.autocomplete.id,
+          name: data.autocomplete.name
+        }
+      }
+      await store_district.createData(info, data_district)
+      onDialogOK()
+    }
+
     return{
       options,
-      autocomplete,
       form,
       dialogRef,
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
-      setFilter
+      setFilter,
+      addNewData
     }
   }
 }
