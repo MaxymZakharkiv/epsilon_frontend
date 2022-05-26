@@ -6,7 +6,6 @@ const REGION_VIEW = "/region/view"
 const REGION_CREATE = "/region/create";
 const REGION_DELETE = "/region/delete";
 const REGION_EDIT = "/region/update";
-const name_api = "region"
 
 
 function list(options) {
@@ -50,5 +49,4 @@ export default {
   del,
   edit,
   view,
-  name_api
 }

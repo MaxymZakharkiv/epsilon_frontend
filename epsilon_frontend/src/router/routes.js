@@ -13,6 +13,11 @@ const routes = [
         path: '/district',
         name:'district',
         component: () => import('../pages/Directives/District')
+      },
+      {
+        path: '/communities',
+        name: 'communities',
+        component: () => import('../pages/Directives/Communities')
       }
     ]
   },

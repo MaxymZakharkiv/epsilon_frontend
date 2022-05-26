@@ -22,67 +22,66 @@
 
 <script>
 
-import { directivesStore } from '../../../stores/directivesStore'
-import api_district from '../../../api/district'
+import { directivesStore } from '../../stores/directivesStore'
+import api_community from '../../api/communities'
 
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
 
 export default {
-  name: "EditDistrict",
+  name: "EditCommunity",
   emits: [
     ...useDialogPluginComponent.emits
   ],
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-    const options = ref([])
-    const store_district = directivesStore(api_district)
-
-    console.log(store_district.edit_data)
+    const store_community = directivesStore(api_community)
 
     const formEdit = ref({
-      id: store_district.edit_data.id,
-      region: store_district.edit_data.region,
-      name: store_district.edit_data.name,
-      schema: store_district.edit_data.schema,
-      name_aliases: store_district.edit_data.name_aliases.join(', ')
+      id: store_community.edit_data.id,
+      district: store_community.edit_data.district,
+      name: store_community.edit_data.name,
+      schema: store_community.edit_data.schema,
+      name_aliases: store_community.edit_data.name_aliases.join(', ')
     })
 
     const editData = async (data) => {
+      console.log(data)
       const infoEdit = {
         id: data.id,
-        region_id: data.region.id,
+        district_id: data.district.id,
         name: data.name,
         schema: data.schema,
         name_aliases: data.name_aliases.split(','),
       }
+      console.log(infoEdit)
       const data_for_table = {
         id: data.id,
         name: data.name,
         schema: data.schema,
         name_aliases: data.name_aliases.split(','),
-        region:{
-          id: data.region.id,
-          name: data.region.name
+        district:{
+          id: data.district.id,
+          name: data.district.name
         }
       }
-      await store_district.editData(infoEdit, data_for_table)
+      console.log(data_for_table)
+      await store_community.editData(infoEdit, data_for_table)
       onDialogOK()
     }
 
-    return{
-      options,
-      formEdit,
 
+    return{
       dialogRef,
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
 
+      formEdit,
+
       editData,
     }
-
   }
 }
 </script>

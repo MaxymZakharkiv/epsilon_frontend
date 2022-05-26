@@ -21,16 +21,13 @@ export function directivesStore(api, store_id="directivesStore"){
     const getData = async (options) => {
       try {
         const response = await api.list(options)
-        console.log(api.name_api, response)
+        console.log(response)
         return response.data
       } catch (error) {
         console.log(error)
       }
     }
 
-    const return_name_api = () => {
-      return api.name_api
-    }
 
     const createData = async (objects, extra_data={}) => {
       try {
@@ -64,7 +61,6 @@ export function directivesStore(api, store_id="directivesStore"){
       editData,
       deleteData,
 
-      return_name_api,
 
       data,
       edit_data,
