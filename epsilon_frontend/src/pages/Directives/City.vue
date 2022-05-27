@@ -2,12 +2,10 @@
   <Suspense>
     <template #default>
       <Table
-        :title="'Громади'"
-        :api="api_communities"
+        :title="'Міста'"
         :columns="columns"
+        :api="api_city"
         @addNewElement="addNewElement"
-        @editElement="editElement"
-        @deleteElement="deleteElement"
       />
     </template>
     <template #fallback>
@@ -18,23 +16,23 @@
 
 <script>
 
-import Table from "components/Table";
-import CreateCommunity from "components/Community/Dialogs/CreateCommunity";
-import EditCommunity from "components/Community/Dialogs/EditCommunity";
-import Skeleton from "components/Skeleton";
-import api_communities from '../../api/community'
-import { directivesStore } from '../../stores/directivesStore'
+import api_city from '../../api/city'
 
-import { useQuasar } from "quasar";
+import CreateCity from "components/City/Dialogs/CreateCity";
+import Table from "components/Table";
+import Skeleton from "components/Skeleton";
+
+import {useQuasar} from "quasar";
 
 export default {
-  name: "Communities",
+  name: "City",
   components:{
     Table,
     Skeleton
   },
   setup(){
 
+    const $q = useQuasar()
     const columns = [
       {
         name:'id',
@@ -61,6 +59,14 @@ export default {
         format:val => `${val}`
       },
       {
+        name:'name_aliases',
+        label:'name_aliases',
+        align:'left',
+        sortable:true,
+        field: row => row.name_aliases,
+        format: (val) => val.join(', ')
+      },
+      {
         name:'district',
         label:'district',
         align:'left',
@@ -69,12 +75,20 @@ export default {
         format:val => `${val}`
       },
       {
-        name:'name_aliases',
-        label:'name_aliases',
+        name:'community',
+        label:'community',
         align:'left',
         sortable:true,
-        field: row => row.name_aliases,
-        format: (val) => val.join(', ')
+        field: row => row.community,
+        format:val => `${val}`
+      },
+      {
+        name:'type',
+        label:'type',
+        align:'left',
+        sortable:true,
+        field: row => row.type,
+        format:val => `${val}`
       },
       {
         name:'remove',
@@ -88,33 +102,18 @@ export default {
       },
     ]
 
-    const $q = useQuasar()
-    const store_community = directivesStore(api_communities)
-
     const addNewElement = () => {
       $q.dialog({
-        component: CreateCommunity
+        component: CreateCity
       })
-    }
-
-    const editElement = () => {
-      $q.dialog({
-        component: EditCommunity
-      })
-    }
-
-    const deleteElement = (id) => {
-      store_community.deleteData(id)
     }
 
     return{
-      columns,
-
-      api_communities,
+      api_city,
 
       addNewElement,
-      editElement,
-      deleteElement,
+
+      columns
     }
   }
 }

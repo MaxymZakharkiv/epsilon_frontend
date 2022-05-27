@@ -45,9 +45,9 @@
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
 
-import api_district from '../../api/district'
-import api_community from '../../api/communities'
-import { directivesStore } from '../../stores/directivesStore'
+import api_district from '../../../api/district'
+import api_community from '../../../api/community'
+import { directivesStore } from 'stores/directivesStore'
 
 export default {
   name: "CreateCommunity",
@@ -67,7 +67,6 @@ export default {
     const store_community = directivesStore(api_community)
     const store_district = directivesStore(api_district, 'storeDistrict')
 
-
     const setFilter = (data, update) => {
       update( async () => {
         store_district.options_data.request.filter_by = []
@@ -85,7 +84,6 @@ export default {
     }
 
     const addNewData = async (data) => {
-      console.log(data)
       const info = {
         name: data.name,
         schema: data.autocomplete.schema,

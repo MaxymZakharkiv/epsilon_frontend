@@ -4,7 +4,6 @@ import {ref} from "vue";
 
 export function directivesStore(api, store_id="directivesStore"){
   return defineStore(String(store_id), () => {
-    console.log(api)
     let edit_data = ref({})
     let data = ref([])
 
@@ -42,8 +41,7 @@ export function directivesStore(api, store_id="directivesStore"){
 
     const editData = async (objects, extra_data={}) => {
       const response = await api.edit(objects)
-      console.log(response.data.id)
-      console.log(extra_data)
+      console.log(response)
       extra_data['id'] = response.data.id
       let index = data.value.findIndex(obj => obj.id === response.data.id)
       data.value[index] = extra_data

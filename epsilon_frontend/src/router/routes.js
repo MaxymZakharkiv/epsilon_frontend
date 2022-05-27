@@ -15,9 +15,14 @@ const routes = [
         component: () => import('../pages/Directives/District')
       },
       {
-        path: '/communities',
-        name: 'communities',
+        path: '/community',
+        name: 'community',
         component: () => import('../pages/Directives/Communities')
+      },
+      {
+        path: '/city',
+        name:'city',
+        component: () => import('../pages/Directives/City')
       }
     ]
   },

@@ -22,8 +22,8 @@
 
 <script>
 
-import { directivesStore } from '../../stores/directivesStore'
-import api_community from '../../api/communities'
+import { directivesStore } from 'stores/directivesStore'
+import api_community from '../../../api/community'
 
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
@@ -47,7 +47,6 @@ export default {
     })
 
     const editData = async (data) => {
-      console.log(data)
       const infoEdit = {
         id: data.id,
         district_id: data.district.id,
@@ -55,7 +54,6 @@ export default {
         schema: data.schema,
         name_aliases: data.name_aliases.split(','),
       }
-      console.log(infoEdit)
       const data_for_table = {
         id: data.id,
         name: data.name,
@@ -66,11 +64,11 @@ export default {
           name: data.district.name
         }
       }
+      console.log(infoEdit)
       console.log(data_for_table)
       await store_community.editData(infoEdit, data_for_table)
       onDialogOK()
     }
-
 
     return{
       dialogRef,
