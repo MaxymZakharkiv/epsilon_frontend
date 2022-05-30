@@ -31,6 +31,43 @@
             </q-item>
           </template>
         </q-select>
+        <q-select
+          v-model="form.district"
+          :options="district_list"
+          label="Райони"
+          option-value="id"
+          option-label="name"
+          @filter="filterDistrict"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Дані відсутні
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
+          v-model="form.community"
+          :options="community_list"
+          label="Громади"
+          option-value="id"
+          option-label="name"
+          @filter="filterCommunity"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Дані відсутні
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-input
+          v-model="form.name_aliases"
+          type="textarea"
+          label="alias"
+        />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -71,9 +108,13 @@ export default {
 
     const options = ref([])
     const region_list = ref([])
+    const district_list = ref([])
+    const community_list = ref([])
 
-
+    const city_store = directivesStore(api_city)
     const region_store = directivesStore(api_region, 'regionStore')
+    const district_store = directivesStore(api_district, 'districtStore')
+    const community_store = directivesStore(api_community, 'communityStore')
 
     const type = [
       {id: 0, name:'область'},
@@ -98,6 +139,7 @@ export default {
 
     const filterRegion = (data, update) => {
       update( async () => {
+        region_store.options_data.request.limit = 50
         await Promise.race([region_store.getData(region_store.options_data)]).then(response => {
           console.log(response)
           region_list.value = response
@@ -105,8 +147,59 @@ export default {
       })
     }
 
-    const addNewData = (data) => {
-      console.log(data)
+    const filterDistrict = (data, update) => {
+      update( async () => {
+        const info = [{
+          field:"region_id",
+          operator:"=",
+          value: form.value.region.id
+        }]
+        district_store.options_data.request.limit = 50
+        district_store.options_data.request.filter_by = info
+        await Promise.race([district_store.getData(district_store.options_data)]).then(response => {
+          console.log(response)
+          district_list.value = response
+        })
+      })
+    }
+
+    const filterCommunity = (data, update) => {
+      update( async () => {
+        const info = [{
+          field: 'district_id',
+          operator: '=',
+          value: form.value.district.id
+        }]
+        community_store.options_data.request.limit = 50
+        community_store.options_data.request.filter_by = info
+        await Promise.race([community_store.getData(community_store.options_data)]).then(response => {
+          console.log(response)
+          community_list.value = response
+        })
+      })
+    }
+
+    const addNewData = async (data) => {
+      const infoRequest = {
+        name: data.name,
+        schema: data.region.schema,
+        region_id: data.region.id,
+        district_id: data.district.id,
+        community_id: data.community.id,
+        name_aliases: data.name_aliases.split(','),
+        type: data.type.id
+      }
+      const infoForTable = {
+        name: data.name,
+        schema: data.region.schema,
+        district: data.district,
+        community: data.community,
+        region: data.region,
+        name_aliases: data.name_aliases.split(','),
+        type: data.type.name
+      }
+      await city_store.createData(infoRequest, infoForTable)
+      onDialogOK()
     }
 
     return{
@@ -117,11 +210,15 @@ export default {
 
       filterType,
       filterRegion,
+      filterDistrict,
+      filterCommunity,
       addNewData,
 
       form,
       options,
-      region_list
+      region_list,
+      district_list,
+      community_list
     }
   }
 }

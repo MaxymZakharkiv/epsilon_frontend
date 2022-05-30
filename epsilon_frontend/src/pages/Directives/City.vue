@@ -6,6 +6,8 @@
         :columns="columns"
         :api="api_city"
         @addNewElement="addNewElement"
+        @editElement="editElement"
+        @deleteElement="deleteElement"
       />
     </template>
     <template #fallback>
@@ -17,8 +19,10 @@
 <script>
 
 import api_city from '../../api/city'
+import { directivesStore } from '../../stores/directivesStore'
 
 import CreateCity from "components/City/Dialogs/CreateCity";
+import EditCity from "components/City/Dialogs/EditCity";
 import Table from "components/Table";
 import Skeleton from "components/Skeleton";
 
@@ -33,6 +37,7 @@ export default {
   setup(){
 
     const $q = useQuasar()
+    const store_city = directivesStore(api_city)
     const columns = [
       {
         name:'id',
@@ -70,15 +75,15 @@ export default {
         name:'district',
         label:'district',
         align:'left',
-        sortable:true,
-        field: row => row.district.name,
+        sortable:false,
+        field: row => row.district,
         format:val => `${val}`
       },
       {
         name:'community',
         label:'community',
         align:'left',
-        sortable:true,
+        sortable:false,
         field: row => row.community,
         format:val => `${val}`
       },
@@ -108,10 +113,22 @@ export default {
       })
     }
 
+    const editElement = () => {
+      $q.dialog({
+        component: EditCity
+      })
+    }
+
+    const deleteElement = (id) => {
+      store_city.deleteData(id)
+    }
+
     return{
       api_city,
 
       addNewElement,
+      editElement,
+      deleteElement,
 
       columns
     }

@@ -88,14 +88,12 @@ export default {
       rowsNumber: 10
     })
 
-
     const loading = ref(false)
     const sortData = ref([])
 
     const store = directivesStore(props.api)
     const disableNextButton = ref(false)
     const disablePrevButton = ref(true)
-
 
     const onRequest = async (value) => {
       loading.value = true
@@ -114,7 +112,6 @@ export default {
         return i['field'] !== 'desc'
       })
 
-
       store.options_data.request.limit = rowsPerPage
       store.options_data.request.order_by = sortData.value
       store.options_data.request.offset = 0
@@ -132,7 +129,6 @@ export default {
     await onRequest({
       pagination: pagination.value
     })
-
 
     watch(store.options_data, value => {
       disablePrevButton.value = value.request.offset === 0 ? true : false
