@@ -76,7 +76,7 @@ export default {
         label:'district',
         align:'left',
         sortable:false,
-        field: row => row.district,
+        field: row => row.district === null ? null : row.district.name,
         format:val => `${val}`
       },
       {
@@ -84,7 +84,7 @@ export default {
         label:'community',
         align:'left',
         sortable:false,
-        field: row => row.community,
+        field: row => row.community === null ? null : row.community.name,
         format:val => `${val}`
       },
       {

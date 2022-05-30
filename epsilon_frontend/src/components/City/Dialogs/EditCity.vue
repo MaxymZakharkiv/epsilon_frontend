@@ -2,6 +2,22 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin">
       <q-card-section>
+        <q-select
+          v-model="form.region"
+          :options="region_list"
+          label="Регіон"
+          option-value="id"
+          option-label="name"
+          @filter="filterRegion"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Дані відсутні
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-input
           label="name"
           v-model="form.name"
@@ -45,15 +61,15 @@ export default {
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-    const store = directivesStore(api_city)
+    const store_city = directivesStore(api_city)
+    console.log(store_city.edit_data)
 
     const options = ref([])
-    console.log(store.edit_data)
     const form = ref({
-      name: store.edit_data.name,
-      type: store.edit_data.type,
-      name_aliases: store.edit_data.name_aliases,
-      region: store.edit_data.region
+      name: store_city.edit_data.name,
+      type: store_city.edit_data.type,
+      name_aliases: store_city.edit_data.name_aliases,
+      region: store_city.edit_data.region
     })
 
     const type = [
@@ -77,7 +93,11 @@ export default {
       })
     }
 
-    console.log(store.edit_data)
+    const filterRegion = (data, update) => {
+      update(() => {
+        console.log(data)
+      })
+    }
 
     return{
       dialogRef,
@@ -86,6 +106,7 @@ export default {
       onCancelClick: onDialogCancel,
 
       filterType,
+      filterRegion,
 
       form,
       options,

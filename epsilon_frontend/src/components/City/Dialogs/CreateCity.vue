@@ -2,19 +2,6 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin">
       <q-card-section>
-        <q-input
-          label="name"
-          v-model="form.name"
-        />
-        <q-select
-          v-model="form.type"
-          :options="options"
-          use-input
-          label="Тип населеного пункту"
-          option-value="id"
-          option-label="name"
-          @filter="filterType"
-        />
         <q-select
           v-model="form.region"
           :options="region_list"
@@ -63,6 +50,19 @@
             </q-item>
           </template>
         </q-select>
+        <q-input
+          label="name"
+          v-model="form.name"
+        />
+        <q-select
+          v-model="form.type"
+          :options="options"
+          use-input
+          label="Тип населеного пункту"
+          option-value="id"
+          option-label="name"
+          @filter="filterType"
+        />
         <q-input
           v-model="form.name_aliases"
           type="textarea"
