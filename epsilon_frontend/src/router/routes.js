@@ -23,6 +23,11 @@ const routes = [
         path: '/city',
         name:'city',
         component: () => import('../pages/Directives/City')
+      },
+      {
+        path: '/city-district',
+        name:'city_district',
+        component: () => import('../pages/Directives/City_Districts')
       }
     ]
   },

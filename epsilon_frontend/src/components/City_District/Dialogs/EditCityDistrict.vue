@@ -4,16 +4,16 @@
       <q-card-section>
         <q-input v-model="form.name" label="name" />
         <q-select
-          v-model="form.autocomplete"
+          v-model="form.city"
+          :options="options_city"
           use-input
           hide-selected
           fill-input
           input-debounce="500"
-          :options="options"
           option-value="id"
           option-label="name"
-          label="Регіони"
-          @filter="setFilter"
+          label="Міста"
+          @filter="filterCity"
         >
           <template v-slot:no-option>
             <q-item>
@@ -35,79 +35,81 @@
 
 <script>
 
-import { directivesStore } from '../../../stores/directivesStore'
-import api_region from '../../../api/region'
-import api_district from '../../../api/district'
-
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
 
+import api_city_district from '../../../api/city_district'
+import api_city from '../../../api/city'
+
+import { directivesStore } from '../../../stores/directivesStore'
+
 export default {
-  name: "CreateDistrict",
+  name: "EditCityDistrict",
   emits: [
     ...useDialogPluginComponent.emits
   ],
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
-    const options = ref([])
+
+    const options_city = ref([])
+
+    const store_city = directivesStore(api_city, "storeCity")
+    const store_city_district = directivesStore(api_city_district)
+
+    console.log(store_city_district.edit_data)
 
     const form = ref({
-      name:'',
-      name_aliases:'',
-      autocomplete: null
+      id: store_city_district.edit_data.id,
+      name: store_city_district.edit_data.name,
+      name_aliases: store_city_district.edit_data.name_aliases.join(','),
+      city: store_city_district.edit_data.city,
+      schema: store_city_district.edit_data.schema
     })
 
-    const store_region = directivesStore(api_region, 'regionStore')
-    const store_district = directivesStore(api_district)
 
-    const setFilter = (data, update) => {
+    const filterCity = (data, update) => {
       update(async () => {
-        store_region.options_data.request.filter_by = []
-        const info = {
-          field:'name',
-          operator:'like',
-          value: data+'%'
-        }
-        store_region.options_data.request.filter_by.push(info)
-        await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
-          console.log(response)
-          options.value = response
+        store_city.options_data.request.limit = 100
+        await Promise.race([store_city.getData(store_city.options_data)]).then(response => {
+          options_city.value = response
         })
       })
     }
 
     const addNewData = async (data) => {
+      console.log(data)
       const info = {
+        id: data.id,
         name: data.name,
-        schema: data.autocomplete.schema,
         name_aliases: data.name_aliases.split(','),
-        region_id: data.autocomplete.id
+        city_id: data.city.id,
+        schema: data.schema
       }
-      console.log(data.autocomplete)
-      const data_district = {
+      const info_for_table = {
+        id: data.id,
         name: data.name,
-        schema: data.autocomplete.schema,
         name_aliases: data.name_aliases.split(','),
-        region:{
-          id: data.autocomplete.id,
-          name: data.autocomplete.name
+        schema: data.schema,
+        city:{
+          id: data.city.id,
+          name: data.city.name
         }
       }
-      await store_district.createData(info, data_district)
+      await store_city_district.editData(info, info_for_table)
       onDialogOK()
     }
 
     return{
-      options,
-      form,
-
       dialogRef,
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
 
-      setFilter,
-      addNewData
+      filterCity,
+      addNewData,
+
+      form,
+      options_city
     }
   }
 }

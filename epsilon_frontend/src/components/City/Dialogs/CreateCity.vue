@@ -196,7 +196,7 @@ export default {
         community: data.community,
         region: data.region,
         name_aliases: data.name_aliases.split(','),
-        type: data.type.name
+        type: data.type
       }
       await city_store.createData(infoRequest, infoForTable)
       onDialogOK()

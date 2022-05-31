@@ -2,9 +2,9 @@
   <Suspense>
     <template #default>
       <Table
-        :title="'Міста'"
+        :title="'Райони міста'"
+        :api="api_city_district"
         :columns="columns"
-        :api="api_city"
         @addNewElement="addNewElement"
         @editElement="editElement"
         @deleteElement="deleteElement"
@@ -18,26 +18,24 @@
 
 <script>
 
-import api_city from '../../api/city'
-import { directivesStore } from '../../stores/directivesStore'
-
-import CreateCity from "components/City/Dialogs/CreateCity";
-import EditCity from "components/City/Dialogs/EditCity";
 import Table from "components/Table";
 import Skeleton from "components/Skeleton";
+import CreateCityDistrict from "components/City_District/Dialogs/CreateCityDistrict";
+import EditCityDistrict from "components/City_District/Dialogs/EditCityDistrict";
 
-import {useQuasar} from "quasar";
+import api_city_district from '../../api/city_district'
+import { directivesStore } from '../../stores/directivesStore'
+
+import { useQuasar } from 'quasar'
 
 export default {
-  name: "City",
+  name: "City_Districts",
   components:{
     Table,
     Skeleton
   },
   setup(){
 
-    const $q = useQuasar()
-    const store_city = directivesStore(api_city)
     const columns = [
       {
         name:'id',
@@ -64,36 +62,20 @@ export default {
         format:val => `${val}`
       },
       {
+        name:'city',
+        label:'city',
+        align:'left',
+        sortable:false,
+        field: row => row.city.name,
+        format:val => `${val}`
+      },
+      {
         name:'name_aliases',
         label:'name_aliases',
         align:'left',
         sortable:true,
         field: row => row.name_aliases,
         format: (val) => val.join(', ')
-      },
-      {
-        name:'district',
-        label:'district',
-        align:'left',
-        sortable:false,
-        field: row => row.district?.name ?? null,
-        format:val => `${val}`
-      },
-      {
-        name:'community',
-        label:'community',
-        align:'left',
-        sortable:false,
-        field: row => row.community?.name ?? null,
-        format:val => `${val}`
-      },
-      {
-        name:'type',
-        label:'type',
-        align:'left',
-        sortable:true,
-        field: row => row.type?.id ?? row.type,
-        format:val => `${val}`
       },
       {
         name:'remove',
@@ -107,28 +89,31 @@ export default {
       },
     ]
 
+    const $q = useQuasar()
+    const city_district_store = directivesStore(api_city_district)
+
     const addNewElement = () => {
       $q.dialog({
-        component: CreateCity
+        component: CreateCityDistrict
       })
     }
 
     const editElement = () => {
       $q.dialog({
-        component: EditCity
+        component: EditCityDistrict
       })
     }
 
     const deleteElement = (id) => {
-      store_city.deleteData(id)
+      city_district_store.deleteData(id)
     }
 
     return{
-      api_city,
-
       addNewElement,
       editElement,
       deleteElement,
+
+      api_city_district,
 
       columns
     }
