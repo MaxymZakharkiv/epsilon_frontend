@@ -10,7 +10,7 @@
           v-model="form.autocomplete"
           use-input
           hide-selected
-          :options="options"
+          :options="district_list"
           fill-input
           input-debounce="500"
           option-value="id"
@@ -43,6 +43,7 @@
 <script>
 
 import { useDialogPluginComponent } from 'quasar'
+import { useAutocomplete } from '../../../composition/autocomplete'
 import { ref } from 'vue'
 
 import api_district from '../../../api/district'
@@ -62,25 +63,20 @@ export default {
       name_aliases:'',
       autocomplete: null
     })
-    const options = ref([])
+
+    const district_list = ref([])
 
     const store_community = directivesStore(api_community)
     const store_district = directivesStore(api_district, 'storeDistrict')
+    const {autocomplete: custAutocomplete} = useAutocomplete()
 
     const setFilter = (data, update) => {
-      update( async () => {
-        store_district.options_data.request.filter_by = []
-        const info = {
-          field:'name',
-          operator:'like',
-          value: data+'%'
-        }
-        store_district.options_data.request.filter_by.push(info)
-        await Promise.race([store_district.getData(store_district.options_data)]).then(response => {
-          console.log(response)
-          options.value = response
-        })
-      })
+      update(
+        custAutocomplete(store_district, data)
+          .then(response => {
+            district_list.value = response.value
+          })
+      )
     }
 
     const addNewData = async (data) => {
@@ -114,7 +110,7 @@ export default {
       setFilter,
 
       form,
-      options
+      district_list
     }
   }
 }

@@ -5,7 +5,7 @@
         <q-input v-model="form.name" label="name" />
         <q-select
           v-model="form.city"
-          :options="options_city"
+          :options="city_list"
           use-input
           hide-selected
           fill-input
@@ -36,6 +36,7 @@
 <script>
 
 import { useDialogPluginComponent } from 'quasar'
+import { useAutocomplete } from '../../../composition/autocomplete'
 import { ref } from 'vue'
 
 import api_city_district from '../../../api/city_district'
@@ -56,18 +57,19 @@ export default {
       name_aliases:'',
       city:''
     })
-    const options_city = ref([])
 
+    const city_list = ref([])
     const store_city = directivesStore(api_city, "storeCity")
     const store_city_district = directivesStore(api_city_district)
+    const {autocomplete: custAutocomplete} = useAutocomplete()
 
     const filterCity = (data, update) => {
-      update(async () => {
-        store_city.options_data.request.limit = 100
-        await Promise.race([store_city.getData(store_city.options_data)]).then(response => {
-          options_city.value = response
-        })
-      })
+      update(
+        custAutocomplete(store_city, data)
+          .then(response => {
+            city_list.value = response.value
+          })
+      )
     }
 
     const addNewData = async (data) => {
@@ -101,7 +103,7 @@ export default {
       addNewData,
 
       form,
-      options_city
+      city_list
     }
   }
 }

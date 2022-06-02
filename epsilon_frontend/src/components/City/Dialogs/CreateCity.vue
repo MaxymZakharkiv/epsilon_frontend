@@ -5,6 +5,8 @@
         <q-select
           v-model="form.region"
           :options="region_list"
+          use-input
+          input-debounce="500"
           label="Регіон"
           option-value="id"
           option-label="name"
@@ -83,6 +85,8 @@ import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
 
 import { directivesStore } from '../../../stores/directivesStore'
+import { useAutocomplete } from '../../../composition/autocomplete'
+import { useSelect } from '../../../composition/select'
 
 import api_region from '../../../api/region'
 import api_district from '../../../api/district'
@@ -115,6 +119,8 @@ export default {
     const region_store = directivesStore(api_region, 'regionStore')
     const district_store = directivesStore(api_district, 'districtStore')
     const community_store = directivesStore(api_community, 'communityStore')
+    const {autocomplete: custAutocomplete} = useAutocomplete()
+    const {select: custSelect} = useSelect()
 
     const type = [
       {id: 0, name:'область'},
@@ -138,45 +144,30 @@ export default {
     }
 
     const filterRegion = (data, update) => {
-      update( async () => {
-        region_store.options_data.request.limit = 50
-        await Promise.race([region_store.getData(region_store.options_data)]).then(response => {
-          console.log(response)
-          region_list.value = response
-        })
-      })
+      update(
+        custAutocomplete(region_store, data)
+          .then(response => {
+            region_list.value = response.value
+          })
+      )
     }
 
     const filterDistrict = (data, update) => {
-      update( async () => {
-        const info = [{
-          field:"region_id",
-          operator:"=",
-          value: form.value.region.id
-        }]
-        district_store.options_data.request.limit = 50
-        district_store.options_data.request.filter_by = info
-        await Promise.race([district_store.getData(district_store.options_data)]).then(response => {
-          console.log(response)
-          district_list.value = response
-        })
-      })
+      update(
+        custSelect(district_store, form.value.region.id, "region_id")
+          .then(response => {
+            district_list.value = response.value
+          })
+      )
     }
 
     const filterCommunity = (data, update) => {
-      update( async () => {
-        const info = [{
-          field: 'district_id',
-          operator: '=',
-          value: form.value.district.id
-        }]
-        community_store.options_data.request.limit = 50
-        community_store.options_data.request.filter_by = info
-        await Promise.race([community_store.getData(community_store.options_data)]).then(response => {
-          console.log(response)
-          community_list.value = response
-        })
-      })
+      update(
+        custSelect(community_store, form.value.district.id, "district_id")
+          .then(response => {
+            community_list.value = response.value
+          })
+      )
     }
 
     const addNewData = async (data) => {

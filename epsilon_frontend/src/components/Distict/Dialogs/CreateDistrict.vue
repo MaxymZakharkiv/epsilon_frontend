@@ -9,7 +9,7 @@
           hide-selected
           fill-input
           input-debounce="500"
-          :options="options"
+          :options="region_list"
           option-value="id"
           option-label="name"
           label="Регіони"
@@ -38,6 +38,7 @@
 import { directivesStore } from '../../../stores/directivesStore'
 import api_region from '../../../api/region'
 import api_district from '../../../api/district'
+import { useAutocomplete } from '../../../composition/autocomplete'
 
 import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
@@ -49,31 +50,25 @@ export default {
   ],
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
-    const options = ref([])
 
     const form = ref({
       name:'',
       name_aliases:'',
       autocomplete: null
     })
+    const region_list = ref([])
 
     const store_region = directivesStore(api_region, 'regionStore')
     const store_district = directivesStore(api_district)
+    const {autocomplete: custAutocomplete} = useAutocomplete()
 
     const setFilter = (data, update) => {
-      update(async () => {
-        store_region.options_data.request.filter_by = []
-        const info = {
-          field:'name',
-          operator:'like',
-          value: data+'%'
-        }
-        store_region.options_data.request.filter_by.push(info)
-        await Promise.race([store_region.getData(store_region.options_data)]).then(response => {
-          console.log(response)
-          options.value = response
-        })
-      })
+      update(
+        custAutocomplete(store_region, data)
+          .then(response => {
+            region_list.value = response.value
+          })
+      )
     }
 
     const addNewData = async (data) => {
@@ -98,7 +93,7 @@ export default {
     }
 
     return{
-      options,
+      region_list,
       form,
 
       dialogRef,

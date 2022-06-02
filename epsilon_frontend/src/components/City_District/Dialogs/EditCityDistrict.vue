@@ -5,7 +5,7 @@
         <q-input v-model="form.name" label="name" />
         <q-select
           v-model="form.city"
-          :options="options_city"
+          :options="city_list"
           use-input
           hide-selected
           fill-input
@@ -42,6 +42,7 @@ import api_city_district from '../../../api/city_district'
 import api_city from '../../../api/city'
 
 import { directivesStore } from '../../../stores/directivesStore'
+import { useAutocomplete } from '../../../composition/autocomplete'
 
 export default {
   name: "EditCityDistrict",
@@ -51,10 +52,10 @@ export default {
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-    const options_city = ref([])
-
+    const city_list = ref([])
     const store_city = directivesStore(api_city, "storeCity")
     const store_city_district = directivesStore(api_city_district)
+    const {autocomplete: custAutocomplete} = useAutocomplete()
 
     console.log(store_city_district.edit_data)
 
@@ -66,14 +67,13 @@ export default {
       schema: store_city_district.edit_data.schema
     })
 
-
     const filterCity = (data, update) => {
-      update(async () => {
-        store_city.options_data.request.limit = 100
-        await Promise.race([store_city.getData(store_city.options_data)]).then(response => {
-          options_city.value = response
-        })
-      })
+      update(
+        custAutocomplete(store_city, data)
+          .then(response => {
+            city_list.value = response.value
+          })
+      )
     }
 
     const addNewData = async (data) => {
@@ -109,7 +109,7 @@ export default {
       addNewData,
 
       form,
-      options_city
+      city_list
     }
   }
 }

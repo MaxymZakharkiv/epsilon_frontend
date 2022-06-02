@@ -67,6 +67,8 @@ import { useDialogPluginComponent } from 'quasar'
 import { ref } from 'vue'
 
 import { directivesStore } from '../../../stores/directivesStore'
+import { useAutocomplete } from '../../../composition/autocomplete'
+import { useSelect } from '../../../composition/select'
 
 import api_street from '../../../api/street'
 import api_city from '../../../api/city'
@@ -94,6 +96,8 @@ export default {
     const street_store = directivesStore(api_street)
     const city_store = directivesStore(api_city, "cityStore")
     const city_district_store = directivesStore(api_city_district, "cityDistrictStore")
+    const {autocomplete: custAutocomplete} = useAutocomplete()
+    const {select: custSelect} = useSelect()
 
     const type = [
       {id: 0, name:'область'},
@@ -117,30 +121,21 @@ export default {
     }
 
     const filterCity = (data, update) => {
-      update( async () => {
-        city_store.options_data.request.limit = 100
-        await Promise.race([city_store.getData(city_store.options_data)])
+      update(
+        custAutocomplete(city_store, data)
           .then(response => {
-            city_list.value = response
+            city_list.value = response.value
           })
-      })
+      )
     }
 
     const filterCityDistrict = (data, update) => {
-      update( async () => {
-        const info = [{
-          field: 'city_id',
-          operator: '=',
-          value: form.value.city.id
-        }]
-        city_district_store.options_data.request.limit = 100
-        city_district_store.options_data.request.filter_by = info
-        await Promise.race([city_district_store.getData(city_district_store.options_data)])
+      update(
+        custSelect(city_district_store, form.value.city.id, "city_id")
           .then(response => {
-            console.log(response)
-            city_district_list.value = response
+            city_district_list.value = response.value
           })
-      })
+      )
     }
 
     const addNewData = async (data) => {

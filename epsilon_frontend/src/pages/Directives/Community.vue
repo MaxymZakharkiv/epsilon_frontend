@@ -64,7 +64,7 @@ export default {
         name:'district',
         label:'district',
         align:'left',
-        sortable:true,
+        sortable:false,
         field: row => row.district.name,
         format:val => `${val}`
       },
