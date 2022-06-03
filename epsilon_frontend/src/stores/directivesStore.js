@@ -27,7 +27,6 @@ export function directivesStore(api, store_id="directivesStore"){
       }
     }
 
-
     const createData = async (objects, extra_data={}) => {
       try {
         const response = await api.create(objects)

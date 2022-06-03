@@ -5,6 +5,9 @@
         :title="'Люди'"
         :api="api_people"
         :columns="columns"
+        @addNewElement="addNewElement"
+        @editElement="editElement"
+        @deleteElement="deleteElement"
       />
     </template>
     <template #fallback>
@@ -17,8 +20,13 @@
 
 import Table from "components/Table";
 import Skeleton from "components/Skeleton";
+import CreatePeople from "components/People/Dialogs/CreatePeople";
+import EditPeople from "components/People/Dialogs/EditPeople";
 
 import api_people from '../../api/people'
+import { directivesStore } from '../../stores/directivesStore'
+
+import { useQuasar } from 'quasar'
 
 export default {
   name: "People",
@@ -232,11 +240,33 @@ export default {
         align:'left'
       },
     ]
+    const $q = useQuasar()
+    const people_store = directivesStore(api_people)
+
+    const addNewElement = () => {
+      $q.dialog({
+        component: CreatePeople
+      })
+    }
+
+    const editElement = () => {
+      $q.dialog({
+        component: EditPeople
+      })
+    }
+
+    const deleteElement = (id) => {
+      people_store.deleteData(id)
+    }
 
     return{
       api_people,
 
-      columns
+      columns,
+
+      addNewElement,
+      editElement,
+      deleteElement
     }
   }
 }
