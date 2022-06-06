@@ -272,10 +272,10 @@ export default {
         block: data.block,
         building: data.building,
         building_suffix: data.building_suffix,
-        city: data.city,
-        city_district: data.city_district,
-        secret_id: data.secret_id,
-        secret_id_short: data.secret_id_short,
+        city: {
+          id: data.city.id,
+          name: data.city.name
+        },
         comment: data.comment,
         corpus: data.corpus,
         first_name: data.first_name,
@@ -288,7 +288,10 @@ export default {
         residents: data.residents,
         rooms: data.rooms,
         space: data.space,
-        street: data.street
+        street: {
+          id: data.street.id,
+          name: data.street.name
+        }
       }
       await people_store.editData(infoData, info_for_table)
       onDialogOK()

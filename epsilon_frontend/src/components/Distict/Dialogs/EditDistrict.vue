@@ -85,12 +85,11 @@ export default {
     }
 
     const editData = async (data) => {
-      console.log(data.region.id)
-      console.log(data.autocomplete)
+      console.log(data)
       const infoEdit = {
         id: data.id,
         name: data.name,
-        schema: data.autocomplete.schema,
+        schema: data.schema,
         name_aliases: data.name_aliases.split(','),
         region_id: data.autocomplete.id
       }

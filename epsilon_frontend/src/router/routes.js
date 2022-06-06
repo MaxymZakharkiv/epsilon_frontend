@@ -38,6 +38,11 @@ const routes = [
         path: '/people',
         name: 'people',
         component: () => import('../pages/Directives/People')
+      },
+      {
+        path: '/service',
+        name: 'service',
+        component: () => import('../pages/Directives/Service')
       }
     ]
   },

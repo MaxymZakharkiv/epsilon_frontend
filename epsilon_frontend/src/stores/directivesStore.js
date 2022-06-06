@@ -41,7 +41,7 @@ export function directivesStore(api, store_id="directivesStore"){
     const editData = async (objects, extra_data={}) => {
       const response = await api.edit(objects)
       console.log(response)
-      extra_data['id'] = response.data.id
+      // extra_data['id'] = response.data.id
       let index = data.value.findIndex(obj => obj.id === response.data.id)
       data.value[index] = extra_data
     }
