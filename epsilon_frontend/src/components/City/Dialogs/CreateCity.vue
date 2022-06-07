@@ -180,7 +180,10 @@ export default {
         name_aliases: data.name_aliases.split(','),
         type: data.type.id
       }
+      const response = await city_store.createData(infoRequest)
+
       const infoForTable = {
+        id: response.data,
         name: data.name,
         schema: data.region.schema,
         district: data.district,
@@ -189,7 +192,8 @@ export default {
         name_aliases: data.name_aliases.split(','),
         type: data.type
       }
-      await city_store.createData(infoRequest, infoForTable)
+      city_store.data.unshift(infoForTable)
+      city_store.data = city_store.data.slice(0, city_store.options_data.request.limit)
       onDialogOK()
     }
 

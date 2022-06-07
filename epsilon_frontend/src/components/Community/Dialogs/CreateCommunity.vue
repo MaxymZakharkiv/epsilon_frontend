@@ -86,7 +86,11 @@ export default {
         district_id: data.autocomplete.id,
         name_aliases: data.name_aliases.split(',')
       }
+
+      const response = await store_community.createData(info)
+
       const data_community = {
+        id: response.data,
         name: data.name,
         schema: data.autocomplete.schema,
         name_aliases: data.name_aliases.split(','),
@@ -95,8 +99,9 @@ export default {
           name: data.autocomplete.name
         }
       }
-      console.log(info)
-      await store_community.createData(info, data_community)
+
+      store_community.data.unshift(data_community)
+      store_community.data = store_community.data.slice(0, store_community.options_data.request.limit)
       onDialogOK()
     }
 

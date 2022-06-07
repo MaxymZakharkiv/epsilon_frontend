@@ -5,18 +5,15 @@
         <q-input
           v-model="form.name"
           label="name"
-          :rules="[val => !!val || 'Field is required' ]"
         />
         <q-input
           v-model="form.schema"
           label="schema"
-          :rules="[val => !!val || 'Field is required' ]"
         />
         <q-input
           type="textarea"
           v-model="form.name_aliases"
           label="alias"
-          :rules="[val => !!val || 'Field is required' ]"
         />
       </q-card-section>
       <q-card-actions align="right">
@@ -30,6 +27,7 @@
 <script>
 
 import { useDialogPluginComponent } from 'quasar'
+
 import { ref } from 'vue'
 import api from '../../../api/region'
 import { directivesStore } from '../../../stores/directivesStore'
@@ -42,33 +40,39 @@ export default {
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
     const form = ref({
-      name:'',
-      schema:'',
-      name_aliases:''
+      name: '',
+      schema: '',
+      name_aliases: ''
     })
-    const store = directivesStore(api)
+
+    const region_store = directivesStore(api)
 
     const addNewData = async () => {
-      const info = {
+      const infoForRequest = {
         name: form.value.name,
         schema: form.value.schema,
         name_aliases: form.value.name_aliases.split(',')
       }
-      await store.createData({
+      const response = await region_store.createData(infoForRequest)
+      const info = {
+        id: response.data,
         name: form.value.name,
         schema: form.value.schema,
         name_aliases: form.value.name_aliases.split(',')
-      }, info)
+      }
+      region_store.data.unshift(info)
+      region_store.data = region_store.data.slice(0, region_store.options_data.request.limit)
       onDialogOK()
     }
 
-
     return{
       form,
+
       dialogRef,
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
+
       addNewData,
     }
   }

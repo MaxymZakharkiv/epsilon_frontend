@@ -29,15 +29,14 @@ export default {
   setup(){
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-    const store = directivesStore(api)
-    console.log(store.edit_data)
-    const formEdit = ref({
-      id: store.edit_data.id,
-      name: store.edit_data.name,
-      schema: store.edit_data.schema,
-      name_aliases: store.edit_data.name_aliases.join(', ')
-    })
+    const region_store = directivesStore(api)
 
+    const formEdit = ref({
+      id: region_store.edit_data.id,
+      name: region_store.edit_data.name,
+      schema: region_store.edit_data.schema,
+      name_aliases: region_store.edit_data.name_aliases.join(', ')
+    })
 
 
     const editData = async (data) => {
@@ -49,6 +48,8 @@ export default {
         name_aliases: data.name_aliases.split(', ')
       }
 
+      const response = await region_store.editData(infoEdit)
+
       const extra_data = {
         id: data.id,
         name: data.name,
@@ -56,7 +57,8 @@ export default {
         name_aliases: data.name_aliases.split(', ')
       }
 
-      await store.editData(infoEdit, extra_data)
+      let index = region_store.data.findIndex(obj => obj.id === response.data.id)
+      region_store.data[index] = extra_data
       onDialogOK()
     }
 

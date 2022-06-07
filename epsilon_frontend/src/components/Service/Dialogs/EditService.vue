@@ -216,6 +216,9 @@ export default {
         acl_office: data.acl_office.split(','),
         organization_id: data.organization.id
       }
+
+      const response = await store_service.editData(infoForRequest)
+      console.log(response)
       const infoForTable ={
         schema: data.schema,
         id: data.id,
@@ -237,11 +240,14 @@ export default {
         acquiring: data.acquiring,
         config: data.config,
         source: data.source,
-        localities: data.localities,
-        acl_office: data.acl_office,
+        localities: data.localities.split(','),
+        acl_office: data.acl_office.split(','),
         organization: data.organization
       }
-      await store_service.editData(infoForRequest, infoForTable)
+      let index = store_service.data.findIndex(obj => obj.id === data.id)
+
+      store_service.data[index] = infoForTable
+
       onDialogOK()
     }
 

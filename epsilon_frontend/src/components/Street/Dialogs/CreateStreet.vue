@@ -147,7 +147,11 @@ export default {
         city_district_id: data.city_district.id,
         type: data.type.id
       }
+
+      const response = await street_store.createData(infoStreet)
+
       const infoForTable = {
+        id: response.data,
         name: data.name,
         schema: data.city.schema,
         name_aliases: data.name_aliases.split(','),
@@ -161,7 +165,9 @@ export default {
         },
         type: data.type
       }
-      await street_store.createData(infoStreet, infoForTable)
+
+      street_store.data.unshift(infoForTable)
+      street_store.data = street_store.data.slice(0, street_store.options_data.request.limit)
       onDialogOK()
     }
 

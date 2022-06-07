@@ -186,6 +186,9 @@ export default {
         name_aliases: data.name_aliases.split(','),
         type: data.type?.id ?? data.type
       }
+
+      const response = await store_city.editData(infoRequest)
+
       const infoForTable = {
         id: data.id,
         name: data.name,
@@ -196,7 +199,10 @@ export default {
         name_aliases: data.name_aliases.split(','),
         type: data.type?.id ?? data.type
       }
-      await store_city.editData(infoRequest, infoForTable)
+
+      let index = store_city.data.findIndex(obj => obj.id === response.data.id)
+      store_city.data[index] = infoForTable
+
       onDialogOK()
     }
 

@@ -78,8 +78,10 @@ export default {
         name_aliases: data.name_aliases.split(','),
         region_id: data.autocomplete.id
       }
-      console.log(data.autocomplete)
+      const response = await store_district.createData(info)
+
       const data_district = {
+        id: response.data,
         name: data.name,
         schema: data.autocomplete.schema,
         name_aliases: data.name_aliases.split(','),
@@ -88,7 +90,8 @@ export default {
           name: data.autocomplete.name
         }
       }
-      await store_district.createData(info, data_district)
+      store_district.data.unshift(data_district)
+      store_district.data = store_district.data.slice(0, store_district.options_data.request.limit)
       onDialogOK()
     }
 

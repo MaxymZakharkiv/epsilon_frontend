@@ -232,7 +232,13 @@ export default {
         space: data.space,
         street_id: data.street.id
       }
-      const info_for_table = {
+
+      const response = await people_store.createData(infoData)
+
+      const infoForTable = {
+        id: response.data.id,
+        secret_id: response.data.secret_id,
+        secret_id_short: response.data.secret_id_short,
         schema: data.city.schema,
         apartment: data.apartment,
         apartment_suffix: data.apartment_suffix,
@@ -261,7 +267,8 @@ export default {
           name: data.street.name
         }
       }
-      await people_store.createData(infoData, info_for_table)
+      people_store.data.unshift(infoForTable)
+      people_store.data = people_store.data.slice(0, people_store.options_data.request.limit)
       onDialogOK()
     }
 

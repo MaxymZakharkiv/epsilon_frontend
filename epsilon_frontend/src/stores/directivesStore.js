@@ -27,24 +27,45 @@ export function directivesStore(api, store_id="directivesStore"){
       }
     }
 
-    const createData = async (objects, extra_data={}) => {
+    // const createData = async (objects, extra_data={}) => {
+    //   try {
+    //     const response = await api.create(objects)
+    //     // extra_data['id'] = response.data
+    //     data.value.unshift(extra_data)
+    //     data.value.pop()
+    //   } catch (e) {
+    //    console.log(e)
+    //   }
+    // }
+    const createData = async (objects) => {
       try {
         const response = await api.create(objects)
-        extra_data['id'] = response.data
-        data.value.unshift(extra_data)
-        data.value.pop()
+        console.log(response)
+        return response
       } catch (e) {
-       console.log(e)
+        console.log(e)
       }
     }
 
-    const editData = async (objects, extra_data={}) => {
-      const response = await api.edit(objects)
-      console.log(response)
-      // extra_data['id'] = response.data.id
-      let index = data.value.findIndex(obj => obj.id === response.data.id)
-      data.value[index] = extra_data
+    // const editData = async (objects, extra_data={}) => {
+    //   const response = await api.edit(objects)
+    //   const data_server =  response.data?.id ?? response.data
+    //   extra_data['id'] = data_server
+    //   let index = data.value.findIndex(obj => obj.id === data_server)
+    //   console.log(index)
+    //   data.value[index] = extra_data
+    // }
+
+    const editData = async (objects) => {
+      try{
+        const response = await api.edit(objects)
+        console.log(response)
+        return response
+      } catch (e) {
+        console.log(e)
+      }
     }
+
 
     const deleteData = async (id) => {
       const response = await api.del(id)

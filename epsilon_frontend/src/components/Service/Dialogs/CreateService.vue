@@ -213,6 +213,9 @@ export default {
         acl_office: data.acl_office.split(','),
         organization_id: data.organization.id
       }
+
+      await store_service.createData(infoForRequest)
+
       const infoForTable ={
         schema: data.schema,
         id: data.id,
@@ -234,11 +237,13 @@ export default {
         acquiring: data.acquiring,
         config: data.config,
         source: data.source,
-        localities: data.localities,
-        acl_office: data.acl_office,
+        localities: data.localities.split(','),
+        acl_office: data.acl_office.split(','),
         organization: data.organization
       }
-      await store_service.createData(infoForRequest, infoForTable)
+
+      store_service.data.unshift(infoForTable)
+      store_service.data = store_service.data.slice(0, store_service.options_data.request.limit)
       onDialogOK()
     }
 

@@ -263,8 +263,14 @@ export default {
         },
         person_id: data.id
       }
+
+      const response = await people_store.editData(infoData)
+
+      console.log(data.id)
       const info_for_table = {
         id: data.id,
+        secret_id: data.secret_id,
+        secret_id_short: data.secret_id_short,
         schema: data.schema,
         apartment: data.apartment,
         apartment_suffix: data.apartment_suffix,
@@ -293,7 +299,10 @@ export default {
           name: data.street.name
         }
       }
-      await people_store.editData(infoData, info_for_table)
+
+      let index = people_store.data.findIndex(obj => obj.id === response.data)
+      people_store.data[index] = info_for_table
+
       onDialogOK()
     }
 

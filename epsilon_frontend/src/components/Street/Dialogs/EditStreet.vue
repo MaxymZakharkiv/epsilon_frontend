@@ -153,8 +153,12 @@ export default {
         city_district_id: data.city_district.id,
         type: data.type?.id ?? data.type
       }
+
+      const response = await street_store.editData(infoStreet)
+
+
       const infoForTable = {
-        data: data.id,
+        id: response.data.id,
         name: data.name,
         schema: data.schema,
         name_aliases: data.name_aliases.split(','),
@@ -168,8 +172,10 @@ export default {
         },
         type: data.type?.id ?? data.type
       }
-      console.log(infoStreet)
-      await street_store.editData(infoStreet, infoForTable)
+
+      let index = street_store.data.findIndex(obj => obj.id === response.data.id)
+      street_store.data[index] = infoForTable
+
       onDialogOK()
     }
 

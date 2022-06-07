@@ -85,6 +85,9 @@ export default {
         city_id: data.city.id,
         schema: data.schema
       }
+
+      const response = await store_city_district.editData(info)
+
       const info_for_table = {
         id: data.id,
         name: data.name,
@@ -95,7 +98,10 @@ export default {
           name: data.city.name
         }
       }
-      await store_city_district.editData(info, info_for_table)
+
+      let index = store_city_district.data.findIndex(obj => obj.id === response.data.id)
+      store_city_district.data[index] = info_for_table
+
       onDialogOK()
     }
 

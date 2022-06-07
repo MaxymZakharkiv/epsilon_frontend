@@ -248,7 +248,6 @@ export default {
       service_store.deleteData(id)
     }
 
-
     return{
       api_service,
 

@@ -89,21 +89,26 @@ export default {
       const infoEdit = {
         id: data.id,
         name: data.name,
-        schema: data.schema,
+        schema: data.autocomplete?.schema ?? data.schema,
         name_aliases: data.name_aliases.split(','),
         region_id: data.autocomplete.id
       }
+
+      const response = await store_district.editData(infoEdit)
+
       const data_for_table = {
         id: data.id,
         name: data.name,
-        schema: data.schema,
+        schema: data.autocomplete?.schema ?? data.schema,
         name_aliases: data.name_aliases.split(','),
         region:{
           id: data.autocomplete.id,
           name: data.autocomplete.name
         }
       }
-      await store_district.editData(infoEdit, data_for_table)
+
+      let index = store_district.data.findIndex(obj => obj.id === response.data.id)
+      store_district.data[index] = data_for_table
       onDialogOK()
     }
 

@@ -80,7 +80,11 @@ export default {
         city_id: data.city.id,
         schema: data.city.schema
       }
-      const info_for_table = {
+
+      const response  = await store_city_district.createData(info)
+
+      const infoForTable = {
+        id: response.data,
         name: data.name,
         name_aliases: data.name_aliases.split(','),
         schema: data.city.schema,
@@ -89,7 +93,9 @@ export default {
           name: data.city.name
         }
       }
-      await store_city_district.createData(info, info_for_table)
+
+      store_city_district.data.unshift(infoForTable)
+      store_city_district.data = store_city_district.data.slice(0, store_city_district.options_data.request.limit)
       onDialogOK()
     }
 
