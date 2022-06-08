@@ -2,9 +2,17 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin">
       <q-card-section>
-        <q-input v-model="form.name" label="name" />
+        <q-input
+          v-model="v$.name.$model"
+          label="name"
+          :error="v$.name.$error"
+        />
+        <span v-for="i in v$.name.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
         <q-select
-          v-model="form.autocomplete"
+          v-model="v$.autocomplete.$model"
+          :error="v$.autocomplete.$error"
           use-input
           hide-selected
           fill-input
@@ -14,6 +22,7 @@
           option-label="name"
           label="Регіони"
           @filter="setFilter"
+          clearable
         >
           <template v-slot:no-option>
             <q-item>
@@ -23,7 +32,18 @@
             </q-item>
           </template>
         </q-select>
-        <q-input type="textarea" v-model="form.name_aliases" label="alias" />
+        <span v-for="i in v$.autocomplete.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
+        <q-input
+          type="textarea"
+          v-model="v$.name_aliases.$model"
+          label="alias"
+          :error="v$.name_aliases.$error"
+        />
+        <span v-for="i in v$.name_aliases.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -40,8 +60,10 @@ import api_region from '../../../api/region'
 import api_district from '../../../api/district'
 import { useAutocomplete } from '../../../composition/autocomplete'
 
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { ref } from 'vue'
+import useVuelidate from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
 
 export default {
   name: "CreateDistrict",
@@ -54,8 +76,24 @@ export default {
     const form = ref({
       name:'',
       name_aliases:'',
-      autocomplete: null
+      autocomplete: ''
     })
+
+    const rules = {
+      name: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      autocomplete: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      name_aliases: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      }
+    }
+
+    const $q = useQuasar()
+    const v$ = useVuelidate(rules, form)
+
     const region_list = ref([])
 
     const store_region = directivesStore(api_region, 'regionStore')
@@ -72,6 +110,14 @@ export default {
     }
 
     const addNewData = async (data) => {
+      if (v$.value.$errors.length || !v$.value.$dirty){
+        $q.notify({
+          type:'negative',
+          message: 'Коректно введіть дані'
+        })
+        return
+      }
+
       const info = {
         name: data.name,
         schema: data.autocomplete.schema,
@@ -98,6 +144,7 @@ export default {
     return{
       region_list,
       form,
+      v$,
 
       dialogRef,
       onDialogHide,

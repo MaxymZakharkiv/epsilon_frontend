@@ -54,7 +54,6 @@
         dense
         flat
         @click="nextPage"
-        :disable="disableNextButton"
       />
     </template>
   </q-table>
@@ -63,7 +62,9 @@
 <script>
 
 import { directivesStore } from '../stores/directivesStore'
+
 import { ref, watch } from 'vue'
+import { useQuasar } from "quasar";
 
 export default {
   name: "Table",
@@ -88,11 +89,12 @@ export default {
       rowsNumber: 10
     })
 
+    const $q = useQuasar()
+
     const loading = ref(false)
     const sortData = ref([])
 
     const store = directivesStore(props.api)
-    const disableNextButton = ref(false)
     const disablePrevButton = ref(true)
 
     const onRequest = async (value) => {
@@ -116,9 +118,17 @@ export default {
       store.options_data.request.order_by = sortData.value
       store.options_data.request.offset = 0
 
-      await Promise.race([store.getData(store.options_data)]).then(response => {
+
+      try{
+        const response = await store.getData(store.options_data)
         store.data = response
-      })
+      } catch (e) {
+        $q.notify({
+          type: 'negative',
+          message: 'Помилка загрузки даних'
+        })
+      }
+
 
       loading.value = false
       pagination.value.rowsPerPage = rowsPerPage
@@ -130,31 +140,40 @@ export default {
       pagination: pagination.value
     })
 
+
     watch(store.options_data, value => {
       disablePrevButton.value = value.request.offset === 0 ? true : false
     }, {deep:true})
 
     const previousPage = async () => {
-      disableNextButton.value = false
       store.options_data.request.offset -= store.options_data.request.limit
       loading.value = true
-      await Promise.race([store.getData(store.options_data)]).then(response => {
+      try{
+        const response = await store.getData(store.options_data)
         store.data = response
-      })
+      } catch (e) {
+        console.log(e)
+      }
       loading.value = false
     }
 
     const nextPage = async () => {
       store.options_data.request.offset += store.options_data.request.limit
       loading.value = true
-      await Promise.race([store.getData(store.options_data)]).then(response => {
-        if (response.length === 0){
-          disableNextButton.value = true
-          store.options_data.request.offset -= store.options_data.request.limit
-        } else {
+      try {
+        const response = await store.getData(store.options_data)
+        if(response.length > 0){
           store.data = response
+        } else {
+          store.options_data.request.offset -= store.options_data.request.limit
+          $q.notify({
+            type: 'negative',
+            message: 'Далі даних нема'
+          })
         }
-      })
+      } catch (e) {
+        console.log(e)
+      }
       loading.value = false
     }
 
@@ -176,7 +195,6 @@ export default {
       pagination,
       loading,
       disablePrevButton,
-      disableNextButton,
 
       previousPage,
       nextPage,

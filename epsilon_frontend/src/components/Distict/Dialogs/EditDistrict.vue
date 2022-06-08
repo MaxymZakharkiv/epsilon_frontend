@@ -3,11 +3,16 @@
     <q-card class="q-dialog-plugin">
       <q-card-section>
         <q-input
+          v-model="v$.name.$model"
           label="name"
-          v-model="formEdit.name"
+          :error="v$.name.$error"
         />
+        <span v-for="i in v$.name.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
         <q-select
-          v-model="formEdit.autocomplete"
+          v-model="v$.autocomplete.$model"
+          :error="v$.autocomplete.$error"
           use-input
           hide-selected
           fill-input
@@ -17,6 +22,7 @@
           option-label="name"
           label="Регіони"
           @filter="setFilter"
+          clearable
         >
           <template v-slot:no-option>
             <q-item>
@@ -26,11 +32,18 @@
             </q-item>
           </template>
         </q-select>
+        <span v-for="i in v$.autocomplete.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
         <q-input
-          v-model="formEdit.name_aliases"
           type="textarea"
+          v-model="v$.name_aliases.$model"
           label="alias"
+          :error="v$.name_aliases.$error"
         />
+        <span v-for="i in v$.name_aliases.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -47,8 +60,10 @@ import { useAutocomplete } from '../../../composition/autocomplete'
 import api_district from '../../../api/district'
 import api_region from '../../../api/region'
 
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { ref } from 'vue'
+import useVuelidate from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
 
 export default {
   name: "EditDistrict",
@@ -75,6 +90,24 @@ export default {
       autocomplete: store_district.edit_data.region
     })
 
+
+
+    const rules = {
+      name: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      autocomplete: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      name_aliases: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      }
+    }
+
+    const $q = useQuasar()
+    const v$ = useVuelidate(rules, formEdit)
+
+
     const setFilter = (data, update) => {
       update(
         custAutocomplete(store_region, data)
@@ -85,7 +118,14 @@ export default {
     }
 
     const editData = async (data) => {
-      console.log(data)
+      if (v$.value.$errors.length){
+        $q.notify({
+          type:'negative',
+          message: 'Коректно введіть дані'
+        })
+        return
+      }
+
       const infoEdit = {
         id: data.id,
         name: data.name,
@@ -115,6 +155,7 @@ export default {
     return{
       region_list,
       formEdit,
+      v$,
 
       dialogRef,
       onDialogHide,

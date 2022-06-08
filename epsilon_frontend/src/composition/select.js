@@ -8,12 +8,14 @@ export function useSelect(){
       operator:'=',
       value: data
     }]
-    console.log(info)
     store.options_data.request.limit = 50
     store.options_data.request.filter_by = info
-    await Promise.race([store.getData(store.options_data)]).then(response => {
+    try {
+      const response = await store.getData(store.options_data)
       list_options.value = response
-    })
+    } catch (e) {
+      console.log(e)
+    }
     return list_options
   }
   return{ select, list_options }

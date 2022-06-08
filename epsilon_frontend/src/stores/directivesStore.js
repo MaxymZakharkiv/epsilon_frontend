@@ -18,13 +18,9 @@ export function directivesStore(api, store_id="directivesStore"){
     })
 
     const getData = async (options) => {
-      try {
-        const response = await api.list(options)
-        console.log(response)
-        return response.data
-      } catch (error) {
-        console.log(error)
-      }
+      const response = await api.list(options)
+      console.log(response)
+      return response.data
     }
 
     // const createData = async (objects, extra_data={}) => {

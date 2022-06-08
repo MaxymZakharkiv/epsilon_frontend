@@ -43,7 +43,7 @@ const routes = [
         path: '/service',
         name: 'service',
         component: () => import('../pages/Directives/Service')
-      }
+      },
     ]
   },
   {

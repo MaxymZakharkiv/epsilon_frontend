@@ -2,9 +2,34 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin">
       <q-card-section>
-        <q-input v-model="formEdit.name" label="name" />
-        <q-input v-model="formEdit.schema" label="schema" />
-        <q-input type="textarea" v-model="formEdit.name_aliases" label="alias" />
+        <q-input
+          v-model="v$.name.$model"
+          label="name"
+          :error="v$.name.$error"
+        />
+        <span v-for="i in v$.name.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
+        <q-input
+          v-model="v$.schema.$model"
+          label="schema"
+          :error="v$.schema.$error"
+        />
+        <span v-for="i in v$.schema.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
+        <q-input
+          type="textarea"
+          v-model="v$.name_aliases.$model"
+          label="alias"
+          :error="v$.name_aliases.$error"
+        />
+        <span v-for="i in v$.name_aliases.$errors" :key="i" class="text-red-10">
+          {{ i.$message }}
+        </span>
+<!--        <q-input v-model="formEdit.name" label="name" />-->
+<!--        <q-input v-model="formEdit.schema" label="schema" />-->
+<!--        <q-input type="textarea" v-model="formEdit.name_aliases" label="alias" />-->
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
@@ -18,8 +43,11 @@
 import api from '../../../api/region'
 import { directivesStore } from '../../../stores/directivesStore'
 
-import { useDialogPluginComponent } from 'quasar'
+import {useDialogPluginComponent, useQuasar} from 'quasar'
 import { ref } from 'vue'
+import useVuelidate from '@vuelidate/core'
+import {helpers, required} from '@vuelidate/validators'
+
 
 export default {
   name: "EditRegion",
@@ -38,9 +66,31 @@ export default {
       name_aliases: region_store.edit_data.name_aliases.join(', ')
     })
 
+    const rules = {
+      name: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      schema: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      },
+      name_aliases: {
+        required: helpers.withMessage("Поле обов'язкове", required)
+      }
+    }
+
+    const $q = useQuasar()
+    const v$ = useVuelidate(rules, formEdit)
 
     const editData = async (data) => {
-      console.log(data)
+
+      if (v$.value.$errors.length){
+        $q.notify({
+          type:'negative',
+          message: 'Коректно введіть дані'
+        })
+        return
+      }
+
       const infoEdit = {
         id: data.id,
         name: data.name,
@@ -64,10 +114,13 @@ export default {
 
     return{
       formEdit,
+      v$,
+
       dialogRef,
       onDialogHide,
       onOKClick:onDialogOK,
       onCancelClick: onDialogCancel,
+
       editData
     }
   }
